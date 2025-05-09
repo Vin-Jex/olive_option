@@ -85,14 +85,15 @@ app.use(express.json({ limit: "50mb" }));
 export const server = http.createServer(app);
 initWs(server);
 
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.get("/swagger.json", (req: Request, res: Response): void => {
+  /*
+    #swagger.ignore = true
+  */
+  return res.download("swagger-output-0044556661.json");
+});
+
 if (env.NODE_ENV !== "production") {
-  app.get("/swagger.json", (req: Request, res: Response): void => {
-    /*
-      #swagger.ignore = true
-    */
-    return res.download("swagger-output-0044556661.json");
-  });
-  app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
   sequelize
     .sync({ alter: true })
     .then(async () => {
